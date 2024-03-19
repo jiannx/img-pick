@@ -24,7 +24,7 @@
         "all": true,
         "asset": true,
         "assetScope": [
-          "$PICTURE"
+          "*/**"
         ]
       },
       "fs": {

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import { convertFileSrc } from '@tauri-apps/api/tauri'
 import { open } from "@tauri-apps/api/dialog"
 import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
 import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, Center } from '@chakra-ui/react';
-import { useStore, File } from '@/store';
-import { imageFirst } from "@/utils";
+import { useStore, File, FileGroup } from '@/store';
+import { isImageFile } from "@/utils";
 
 
 export default function () {
@@ -21,8 +20,10 @@ export default function () {
         const nameSplit = f.name?.split('.') || [];
         const suffix = nameSplit.pop();
         return {
+          dir: workDir,
           path: f.path,
           name: f.name,
+          url: convertFileSrc(f.path),
           pureName: nameSplit.join('.'),
           suffix,
         }
@@ -38,12 +39,11 @@ export default function () {
         }
         fileMap[file.pureName as string].push(file);
       });
-    const mergedFiles = Object.values(fileMap).map((files: File[]) => {
+
+    const fileGroups: FileGroup[] = Object.values(fileMap).map((files: File[]) => {
       return {
-        name: files[0].name,
-        path: files[0].path,
         pureName: files[0].pureName,
-        suffixs: files.map(f => f.suffix).sort((suffix: string) => imageFirst(suffix, null)),
+        imageFile: files.find(f => isImageFile(f)),
         files,
       }
     });
@@ -51,12 +51,9 @@ export default function () {
     setState({
       workDir,
       files,
-      mergedFiles,
+      fileGroups,
     });
-    console.log('files', mergedFiles)
-    // files.forEach(filePath => {
-    //   const url = convertFileSrc(filePath)
-    // })
+    console.log('files', fileGroups)
   }
 
   return (

@@ -7,13 +7,16 @@ import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
 import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, Flex, Center, Text, Box } from '@chakra-ui/react';
 import { useStore, File } from '@/store';
+import FilePreview from "../FilePreview";
 
 
 export default function ImageCard({
   file,
+  name,
   onClick,
 }: {
-  file: File,
+  file?: File;
+  name: string;
   onClick: () => void;
 }) {
   const { setState, files } = useStore();
@@ -29,7 +32,7 @@ export default function ImageCard({
       mx={2}
       onClick={onClick}
     >
-      {file.pureName}
+      <FilePreview file={file} />
     </Box>
   )
 }
