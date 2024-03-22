@@ -7,10 +7,9 @@ import {
 } from '@chakra-ui/react'
 import { theme } from './theme';
 
+// React.StrictMode 会导致刷新两次
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <ChakraProvider theme={theme}>
-      <App />
-    </ChakraProvider>
-  </React.StrictMode>,
+  <ChakraProvider theme={theme}>
+    <App />
+  </ChakraProvider>,
 );

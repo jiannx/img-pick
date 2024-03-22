@@ -110,6 +110,7 @@ export default function () {
           const isSel = group.pureName === previewGroup?.pureName;
           return (
             <Box
+              key={group.pureName}
               minW={'80px'}
               height={'120px'}
               flexShrink={0}
@@ -123,7 +124,6 @@ export default function () {
                 setSelectedGroup(group);
               }}
               opacity={group?.tags?.includes(FileTag.DEL) ? 0.5 : 1}
-              
             >
               <FilePreview file={group.imageFile} />
             </Box>

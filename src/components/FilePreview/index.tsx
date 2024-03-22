@@ -1,9 +1,10 @@
 import { File } from "@/store";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { readImageToUrl } from '@/utils';
 import { useAsyncEffect, useInViewport, useSetState } from "ahooks";
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { Center, Image } from "@chakra-ui/react";
+import { invoke } from '@tauri-apps/api/tauri'
 
 async function read() {
   // await readImageToUrl('/Users/hao/a/DSCF1675.JPG');
@@ -20,9 +21,11 @@ export default function FilePreview({ file, ...otherProps }: {
 
   const ref = useRef(null);
   const [inViewport] = useInViewport(ref);
+  const [t, setT] = useState('');
 
   useAsyncEffect(async () => {
-    console.log('useAsyncEffect');
+    // console.log('useAsyncEffect', file?.path,);
+
     // if (inViewport && !state.url) {
     //   if (file.suffixs?.includes('JPG')) {
     //     const url = await readImageToUrl(`${file.dir}/${file.pureName}.JPG`);
@@ -32,6 +35,15 @@ export default function FilePreview({ file, ...otherProps }: {
     //   }
     // }
   }, [file, inViewport]);
+
+  useAsyncEffect(async () => {
+    console.log('useAsyncEffect');
+    if (file?.path) {
+      // const str = await invoke('get_base64', { path: file?.path, size: 100, quality: 10 });
+      // console.log('--str', {str})
+      // setT('data:image/jpeg;base64,' + str);
+    }
+  }, []);
 
   return (
     <Center ref={ref} style={{ height: '100%', width: '100%' }}>
