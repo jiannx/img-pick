@@ -4,7 +4,7 @@ import { convertFileSrc } from '@tauri-apps/api/tauri'
 import { open } from "@tauri-apps/api/dialog"
 import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
 import { useSetState, useAsyncEffect } from 'ahooks';
-import { Button, Center } from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Flex } from '@chakra-ui/react';
 import { useStore, File, FileGroup } from '@/store';
 import { isImageFile } from "@/utils";
 
@@ -57,8 +57,28 @@ export default function () {
   }
 
   return (
-    <Center w="100vh" h="100vh">
-      <Button onClick={onSelectDir}>选择目录</Button>
-    </Center>
+    <Flex w="100%" height='100vh' alignItems="center" flexDirection="column" justifyContent="center">
+      <Button onClick={onSelectDir} mb={4}>选择目录</Button>
+      <Alert
+        status='info'
+        variant='subtle'
+        flexDirection='column'
+        alignItems='center'
+        justifyContent='center'
+        textAlign='center'
+        height='200px'
+        width="70vh"
+        position="absolute"
+        bottom={4}
+      >
+        <AlertIcon boxSize='40px' mr={0} />
+        <AlertTitle mt={4} mb={1} fontSize='lg'>
+          使用说明
+        </AlertTitle>
+        <AlertDescription maxWidth='sm'>
+          <p>选择需要管理的图片文件夹</p>
+        </AlertDescription>
+      </Alert>
+    </Flex>
   )
 }

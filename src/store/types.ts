@@ -5,6 +5,10 @@ export enum Suffix {
 
 export const ImagesSuffix: string[] = [Suffix.JPG, Suffix.PNG];
 
+export enum FileTag {
+  DEL = 'del',
+}
+
 /** 文件 */
 export interface File {
   /** 文件目录 */
@@ -26,4 +30,5 @@ export interface FileGroup {
   pureName: string;
   imageFile?: File;
   files?: File[];
+  tags?: FileTag[];
 }

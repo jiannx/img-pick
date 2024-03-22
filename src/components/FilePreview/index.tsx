@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { readImageToUrl } from '@/utils';
 import { useAsyncEffect, useInViewport, useSetState } from "ahooks";
 import { convertFileSrc } from '@tauri-apps/api/tauri';
-import { Center } from "@chakra-ui/react";
+import { Center, Image } from "@chakra-ui/react";
 
 async function read() {
   // await readImageToUrl('/Users/hao/a/DSCF1675.JPG');
@@ -13,8 +13,9 @@ async function read() {
 read();
 
 
-export default function FilePreview({ file }: {
-  file?: File
+export default function FilePreview({ file, ...otherProps }: {
+  file?: File;
+  [key: string]: any;
 }) {
 
   const ref = useRef(null);
@@ -34,7 +35,7 @@ export default function FilePreview({ file }: {
 
   return (
     <Center ref={ref} style={{ height: '100%', width: '100%' }}>
-      {inViewport && <img src={file?.url} alt="" style={{ maxHeight: '100%', maxWidth: '100%' }} />}
+      {inViewport && <Image src={file?.url} alt="" style={{ maxHeight: '100%', maxWidth: '100%' }} boxShadow='base' />}
     </Center>
   )
 }
