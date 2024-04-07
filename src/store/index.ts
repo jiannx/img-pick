@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { File, FileGroup, FileTag } from './types';
 import * as _ from 'radash';
 import { removeFile } from '@tauri-apps/api/fs';
+import { invoke } from "@tauri-apps/api/tauri";
 
 export interface State {
   /** 工作目录 */
@@ -79,7 +80,10 @@ const useStore = create<State>((set, get) => ({
       }
       const files = _.flat(groups.map(g => g.files || []));
       for (let file of files) {
-        await removeFile(file.path);
+        // await removeFile(file.path);
+        await invoke('move_trash', {
+          path: file.path,
+        });
       }
       if (groups.find(g => g.pureName === previewGroup?.pureName)) {
         set({ previewGroup: undefined });

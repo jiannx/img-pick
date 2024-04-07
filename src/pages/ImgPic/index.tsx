@@ -53,7 +53,7 @@ export default function () {
   const onRemove = async () => {
     const yes = await ask('将同时从磁盘中删除.RAW等后缀的同名文件', { title: '确认删除' });
     if (yes) {
-      toast.promise(actions.removeFiles(previewGroup), {
+      toast.promise(actions.removeFiles(), {
         success: { title: '文件删除成功' },
         error: { title: '文件删除失败', },
         loading: { title: '文件删除中', description: 'Please wait' },
