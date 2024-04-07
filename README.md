@@ -1,7 +1,22 @@
-# Tauri + React + Typescript
+# Image Pick
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+an application help you delete the raw file while deleting the image
 
-## Recommended IDE Setup
+# How to use
+![preview1](https://github.com/lemoolu/img-pick/blob/master/public/guide1.png?raw=true)
+![preview2](https://github.com/lemoolu/img-pick/blob/master/public/guide2.png?raw=true)
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+# Develop
+
+1. clone
+2. pnpm i
+3. pnpm run t:dev
+
+# Issue
+https://github.com/lemoolu/img-pick/issues 
+
+# Based
+* https://tauri.app/
+* https://chakra-ui.com/
+* https://ahooks.js.org/
+* https://react.dev/
