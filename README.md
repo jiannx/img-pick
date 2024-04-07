@@ -3,8 +3,8 @@
 an application help you delete the raw file while deleting the image
 
 # How to use
-![preview1](https://github.com/lemoolu/img-pick/blob/master/public/guide1.png?raw=true)
-![preview2](https://github.com/lemoolu/img-pick/blob/master/public/guide2.png?raw=true)
+![preview1](https://github.com/lemoolu/img-pick/blob/61e505c15c1830218805f9b306d61b229b824651/public/guide1.png)
+![preview2](https://github.com/lemoolu/img-pick/blob/61e505c15c1830218805f9b306d61b229b824651/public/guide2.png)
 
 # Develop
 
