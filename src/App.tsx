@@ -5,17 +5,25 @@ import SelectDir from "./pages/SelectDir";
 import ImgPic from "./pages/ImgPic";
 
 
+
 function App() {
-  const { workDir, files } = useStore();
 
+  useEffect(() => {
+    // 移除默认快捷键
+    document.addEventListener("keydown", function (event) {
+      event.preventDefault();
+    });
+  }, []);
+
+  const { workDir, fileGroups } = useStore();
+  let child = null;
   if (!workDir) {
-    return <SelectDir />
-  }
-  if (files) {
-    return <ImgPic />
+    child = <SelectDir />
+  } else if (fileGroups) {
+    child = <ImgPic />
   }
 
-  return <div>异常</div>;
+  return child;
 }
 
 export default App;

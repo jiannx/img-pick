@@ -19,7 +19,6 @@ export default function ImageCard({
   name: string;
   onClick: () => void;
 }) {
-  const { setState, files } = useStore();
 
   return (
     <Box

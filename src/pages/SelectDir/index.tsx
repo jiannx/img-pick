@@ -4,7 +4,7 @@ import { convertFileSrc } from '@tauri-apps/api/tauri'
 import { open } from "@tauri-apps/api/dialog"
 import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
 import { useSetState, useAsyncEffect } from 'ahooks';
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Flex } from '@chakra-ui/react';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Flex, Stack, Tag, VStack } from '@chakra-ui/react';
 import { useStore, File, FileGroup } from '@/store';
 import { isImageFile } from "@/utils";
 
@@ -73,10 +73,22 @@ export default function () {
       >
         <AlertIcon boxSize='40px' mr={0} />
         <AlertTitle mt={4} mb={1} fontSize='lg'>
-          使用说明
+          操作说明
         </AlertTitle>
-        <AlertDescription maxWidth='sm'>
-          <p>选择需要管理的图片文件夹</p>
+        <AlertDescription>
+          <VStack>
+            <Box fontSize="small" textAlign="left" w={300}>
+              <p>1. 选择需要管理的图片文件夹</p>
+              <p>2. 筛选图片</p>
+              <p>3. 删除图片并同时删除同名.RAW文件</p>
+            </Box>
+            <Stack spacing={1} direction={['column', 'row']}>
+              <Tag size="sm">command+a 全选</Tag>
+              <Tag size="sm">delete 标记删除</Tag>
+              <Tag size="sm">&lt;&minus; 上一张</Tag>
+              <Tag size="sm">&minus;&gt; 下一张</Tag>
+            </Stack>
+          </VStack>
         </AlertDescription>
       </Alert>
     </Flex>

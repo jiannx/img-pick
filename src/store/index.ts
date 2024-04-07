@@ -13,50 +13,134 @@ export interface State {
   previewGroup?: FileGroup;
   /** 设置store */
   setState: (state: any) => void;
-  /** 设置标签 */
-  setGroupTagChange: (fileGroup: FileGroup, tags: FileTag[]) => void;
-  /** 设置选中项 */
-  setSelectedGroup: (fileGroup: FileGroup | FileGroup[], keepOthers?: boolean) => void;
-  /** 删除文件 */
-  removeFiles: (fileGroup?: FileGroup | FileGroup[]) => Promise<any>;
+  /** 过滤条件 */
+  filter: string | null;
+  /** 重置 */
+  onReset: () => void;
+  actions: {
+    /** 设置标签 */
+    setGroupTagChange: (fileGroup: FileGroup, tags: FileTag[]) => void;
+    /** 设置选中项 */
+    setSelectedGroup: (fileGroup: FileGroup | FileGroup[], keepOthers?: boolean) => void;
+    /** 删除文件 */
+    removeFiles: (fileGroup?: FileGroup | FileGroup[]) => Promise<any>;
+    /** 全部选中 */
+    selectAll: () => void;
+    /** 取消全部选中 */
+    unselectAll: () => void;
+    /** 预览下一个 */
+    preiviewNext: () => void;
+    /** 预览下一个 */
+    preiviewPrevious: () => void;
+  }
 }
 
 const useStore = create<State>((set, get) => ({
   setState(state) {
     set(state);
   },
-  setGroupTagChange(fileGroup, tags) {
-    const { fileGroups } = get();
-    fileGroups?.forEach(fg => {
-      if (fg.pureName === fileGroup.pureName) {
-        fg.tags = tags;
-      }
-    });
-    set({ fileGroups });
-  },
-  setSelectedGroup: (fileGroup, keepOthers) => {
-    if (Array.isArray(fileGroup)) {
-
-    } else {
-      set({ previewGroup: fileGroup as FileGroup });
-    }
-  },
-  removeFiles: async (fileGroup) => {
-    if (!fileGroup) {
-      return;
-    }
-    let groups: FileGroup[] = Array.isArray(fileGroup) ? fileGroup : [fileGroup];
-    const files = _.flat(groups.map(g => g.files || []));
-    for (let file of files) {
-      await removeFile(file.path);
-    }
-    const { fileGroups, previewGroup } = get();
-    if (groups.find(g => g.pureName === previewGroup?.pureName)) {
-      set({ previewGroup: undefined });
-    }
+  filter: null,
+  onReset: () => {
     set({
-      fileGroups: fileGroups?.filter(f => !groups.find(g => g.pureName === f.pureName))
-    });
+      workDir: undefined,
+      files: [],
+      fileGroups: [],
+    })
+  },
+  actions: {
+    setGroupTagChange(fileGroup, tags) {
+      const { fileGroups } = get();
+      fileGroups?.forEach(fg => {
+        if (fg.pureName === fileGroup.pureName) {
+          fg.tags = tags;
+        }
+      });
+      set({ fileGroups });
+    },
+    setSelectedGroup: (fileGroup, keepOthers) => {
+      if (Array.isArray(fileGroup)) {
+
+      } else {
+        set({ previewGroup: fileGroup as FileGroup });
+      }
+    },
+    removeFiles: async (fileGroup) => {
+      const { fileGroups, previewGroup } = get();
+      let groups: FileGroup[] = [];
+
+      if (fileGroup) {
+        groups = Array.isArray(fileGroup) ? fileGroup : [fileGroup]
+      } else {
+        // 默认删除选中的文件
+        if (previewGroup) {
+          groups.push(previewGroup);
+        }
+        groups.push(...(fileGroups?.filter(g => g.isSelected) || []));
+      }
+      const files = _.flat(groups.map(g => g.files || []));
+      for (let file of files) {
+        await removeFile(file.path);
+      }
+      if (groups.find(g => g.pureName === previewGroup?.pureName)) {
+        set({ previewGroup: undefined });
+      }
+      set({
+        fileGroups: fileGroups?.filter(f => !groups.find(g => g.pureName === f.pureName))
+      });
+    },
+    selectAll: () => {
+      let state = get();
+      let groups = [...(state.fileGroups || [])];
+
+      if (state.filter === FileTag.Del) {
+        groups.forEach(g => {
+          g.isSelected = g.tags?.includes(FileTag.Del);
+        });
+      } else if (state.filter === FileTag.NotDel) {
+        groups.forEach(g => {
+          g.isSelected = !g.tags?.includes(FileTag.Del);
+        });
+      } else {
+        groups.forEach(g => {
+          g.isSelected = true;
+        });
+      }
+      set({ fileGroups: groups })
+    },
+    unselectAll: () => {
+      let state = get();
+      let groups = [...(state.fileGroups || [])];
+      groups.forEach(g => {
+        g.isSelected = false;
+      });
+      set({ fileGroups: groups })
+    },
+    /** 预览下一个 */
+    preiviewNext: () => {
+      get().actions.unselectAll();
+      const { previewGroup, fileGroups } = get();
+      if (previewGroup && fileGroups) {
+        const index = fileGroups?.findIndex(f => f.pureName === previewGroup.pureName);
+        if (index < (fileGroups?.length - 1)) {
+          set({
+            previewGroup: fileGroups[index + 1],
+          })
+        }
+      }
+    },
+    /** 预览下一个 */
+    preiviewPrevious: () => {
+      get().actions.unselectAll();
+      const { previewGroup, fileGroups } = get();
+      if (previewGroup && fileGroups) {
+        const index = fileGroups?.findIndex(f => f.pureName === previewGroup.pureName);
+        if (index > 0) {
+          set({
+            previewGroup: fileGroups[index - 1],
+          })
+        }
+      }
+    }
   }
 }))
 

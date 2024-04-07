@@ -8,51 +8,78 @@ import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, Flex, Center, Text, Box, Select, CheckboxGroup, Stack, Checkbox, HStack, Tag, useToast } from '@chakra-ui/react';
 import { useStore, File, FileTag } from '@/store';
 import FilePreview from "@/components/FilePreview";
-import { removeFile } from '@tauri-apps/api/fs';
-import Confirm from "@/components/Confirm";
-
-const FilterTagNotDel = 'notDel';
+import { Icon } from "@chakra-ui/react";
+import { MdClose } from "react-icons/md";
+import { ask } from '@tauri-apps/api/dialog';
+import { useKeyPress } from 'ahooks';
 
 export default function () {
-  const { setState, fileGroups, previewGroup, setGroupTagChange, setSelectedGroup, removeFiles } = useStore();
-  const [filter, setFilter] = useState<null | string>(null);
-  const toast = useToast();
+  const { setState, fileGroups, previewGroup, filter, onReset, actions } = useStore();
+  const toast = useToast({
+    isClosable: true,
+  });
+
+  useKeyPress('leftarrow', (e) => {
+    e.stopPropagation();
+    actions.preiviewPrevious();
+  });
+  useKeyPress('rightarrow', (e) => {
+    e.stopPropagation();
+    actions.preiviewNext();
+  });
+  useKeyPress('meta.a', (e) => {
+    e.stopPropagation();
+    actions.selectAll();
+  });
+  useKeyPress(['delete', 'backspace'], (e) => {
+    e.stopPropagation();
+    if (previewGroup?.tags?.includes(FileTag.Del)) {
+      actions.setGroupTagChange(previewGroup!, previewGroup?.tags.filter(t => t !== FileTag.Del));
+    } else {
+      actions.setGroupTagChange(previewGroup!, [...(previewGroup?.tags || []), FileTag.Del]);
+    }
+  });
 
   const showGroups = fileGroups?.filter(g => {
-    if (filter === FileTag.DEL) {
-      return g.tags?.includes(FileTag.DEL);
+    if (filter === FileTag.Del) {
+      return g.tags?.includes(FileTag.Del);
     }
-    if (filter === FilterTagNotDel) {
-      return !g.tags?.includes(FileTag.DEL);
+    if (filter === FileTag.NotDel) {
+      return !g.tags?.includes(FileTag.Del);
     }
     return true;
   });
 
   const onRemove = async () => {
-    toast.promise(removeFiles(previewGroup), {
-      success: { title: '文件删除成功' },
-      error: { title: '文件删除失败', },
-      loading: { title: '文件删除中', description: 'Please wait' },
-    });
+    const yes = await ask('将同时从磁盘中删除.RAW等后缀的同名文件', { title: '确认删除' });
+    if (yes) {
+      toast.promise(actions.removeFiles(previewGroup), {
+        success: { title: '文件删除成功' },
+        error: { title: '文件删除失败', },
+        loading: { title: '文件删除中', description: 'Please wait' },
+      });
+    }
   };
 
   return (
     <Flex direction="column" h="100vh" >
+      {/* 预览 */}
       <Center flex={1} overflow={'auto'} position="relative" p={4}>
         {previewGroup &&
           <FilePreview file={previewGroup?.imageFile}></FilePreview>
         }
+        <Box position="absolute" top={0} right={0} >
+          <Icon as={MdClose} boxSize={6} onClick={onReset} title="重新选择目录"></Icon>
+        </Box>
       </Center>
+
       <Flex
         height={30}
         justifyContent="space-between"
         alignItems="center"
-        borderTop={0}
-        borderBottom={0}
         borderColor={'gray'}
         borderStyle={'solid'}
-        paddingLeft={4}
-        paddingRight={4}
+        px={4}
       >
         <HStack spacing={2} >
           <Box fontSize="small">
@@ -65,13 +92,14 @@ export default function () {
           ))}
         </HStack>
         <Box>
-          <CheckboxGroup value={previewGroup?.tags || []} onChange={(tags: FileTag[]) => setGroupTagChange(previewGroup!, tags)}>
+          <CheckboxGroup value={previewGroup?.tags || []} onChange={(tags: FileTag[]) => actions.setGroupTagChange(previewGroup!, tags)}>
             <Stack spacing={[5, 5]} direction={['column', 'row']}>
-              <Checkbox value={FileTag.DEL}>标记删除</Checkbox>
+              <Checkbox value={FileTag.Del}><Box fontSize="small">标记删除</Box></Checkbox>
             </Stack>
           </CheckboxGroup>
         </Box>
       </Flex>
+      {/* 中间工具 */}
       <Flex
         height={'40px'}
         flexShrink={0}
@@ -83,19 +111,16 @@ export default function () {
         borderStyle={'solid'}
         bg="gray.50"
       >
-        <Box>
-
-        </Box>
-        <Flex>
-          <Confirm
-            onOk={onRemove}
-            context={'是否删除文件，将同时从磁盘中删除.RAW等后缀的同名文件'}
-          >
-            <Button size="xs" mr={4}>删除选中图片</Button>
-          </Confirm >
-          <Select placeholder='关闭过滤器' size='xs' variant='filled' onChange={e => setFilter(e.target.value)}>
-            <option value={FileTag.DEL}>已标记删除</option>
-            <option value={FilterTagNotDel}>未标记删除</option>
+        <Box></Box>
+        <Flex alignItems="center">
+          <Button size="xs" mr={2} w={'80px'} onClick={actions.selectAll}>全部选中</Button>
+          <Button size="xs" mr={2} w={'80px'} onClick={actions.unselectAll}>取消选中</Button>
+          <Button size="xs" mr={2} w={'100px'} onClick={onRemove}>删除选中图片</Button>
+          <Select placeholder='关闭过滤器' size='xs' variant='filled' onChange={e => {
+            setState({ filter: e.target.value, previewGroup: null });
+          }} w={150}>
+            <option value={FileTag.Del}>已标记删除</option>
+            <option value={FileTag.NotDel}>未标记删除</option>
           </Select>
         </Flex>
       </Flex>
@@ -107,7 +132,7 @@ export default function () {
         px={4}
       >
         {showGroups?.map(group => {
-          const isSel = group.pureName === previewGroup?.pureName;
+          const isSel = group.isSelected || group.pureName === previewGroup?.pureName;
           return (
             <Box
               key={group.pureName}
@@ -121,9 +146,9 @@ export default function () {
               cursor={'pointer'}
               mx={2}
               onClick={() => {
-                setSelectedGroup(group);
+                actions.setSelectedGroup(group);
               }}
-              opacity={group?.tags?.includes(FileTag.DEL) ? 0.5 : 1}
+              opacity={group?.tags?.includes(FileTag.Del) ? 0.5 : 1}
             >
               <FilePreview file={group.imageFile} />
             </Box>
