@@ -1,10 +1,7 @@
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
 import { convertFileSrc } from '@tauri-apps/api/tauri'
 import { open } from "@tauri-apps/api/dialog"
-import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
-import { useSetState, useAsyncEffect } from 'ahooks';
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Center, Flex, Stack, Tag, VStack } from '@chakra-ui/react';
+import { readDir } from '@tauri-apps/api/fs';
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Flex, Stack, Tag, VStack } from '@chakra-ui/react';
 import { useStore, File, FileGroup } from '@/store';
 import { isImageFile } from "@/utils";
 
@@ -15,7 +12,7 @@ export default function () {
   const onSelectDir = async () => {
     // 读取文件
     let workDir = await open({ multiple: false, directory: true });
-    const files: File[] = (await readDir(workDir as string, { recursive: true }))
+    const files: any[] = (await readDir(workDir as string, { recursive: true }))
       .map(f => {
         const nameSplit = f.name?.split('.') || [];
         const suffix = nameSplit.pop();

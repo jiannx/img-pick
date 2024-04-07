@@ -1,6 +1,5 @@
 import { File, ImagesSuffix } from '@/store';
-import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { readBinaryFile } from '@tauri-apps/api/fs';
 
 // 文件名排序，图片优先
 export function isImageFile(f: File): boolean {

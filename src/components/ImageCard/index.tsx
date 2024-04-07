@@ -1,18 +1,10 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/tauri";
-import { convertFileSrc } from '@tauri-apps/api/tauri'
-import { open } from "@tauri-apps/api/dialog"
-import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
-import { useSetState, useAsyncEffect } from 'ahooks';
-import { Button, Flex, Center, Text, Box } from '@chakra-ui/react';
-import { useStore, File } from '@/store';
+import { Box } from '@chakra-ui/react';
+import { File } from '@/store';
 import FilePreview from "../FilePreview";
 
 
 export default function ImageCard({
   file,
-  name,
   onClick,
 }: {
   file?: File;

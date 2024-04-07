@@ -1,12 +1,5 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/tauri";
-import { convertFileSrc } from '@tauri-apps/api/tauri'
-import { open } from "@tauri-apps/api/dialog"
-import { readDir, BaseDirectory, readBinaryFile } from '@tauri-apps/api/fs';
-import { useSetState, useAsyncEffect } from 'ahooks';
-import { Button, Flex, Center, Text, Box, Select, CheckboxGroup, Stack, Checkbox, HStack, Tag, useToast } from '@chakra-ui/react';
-import { useStore, File, FileTag } from '@/store';
+import { Button, Flex, Center, Box, Select, CheckboxGroup, Stack, Checkbox, HStack, Tag, useToast } from '@chakra-ui/react';
+import { useStore, FileTag } from '@/store';
 import FilePreview from "@/components/FilePreview";
 import { Icon } from "@chakra-ui/react";
 import { MdClose } from "react-icons/md";

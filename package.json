@@ -8,7 +8,8 @@
     "t:dev": "tauri dev",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "tsc": "tsc"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",

@@ -1,10 +1,7 @@
 import { File } from "@/store";
-import { useEffect, useRef, useState } from "react";
-import { readImageToUrl } from '@/utils';
-import { useAsyncEffect, useInViewport, useSetState } from "ahooks";
+import { useRef } from "react";
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { Center, Image } from "@chakra-ui/react";
-import { invoke } from '@tauri-apps/api/tauri'
 
 async function read() {
   // await readImageToUrl('/Users/hao/a/DSCF1675.JPG');
@@ -14,7 +11,7 @@ async function read() {
 read();
 
 
-export default function FilePreview({ file, ...otherProps }: {
+export default function FilePreview({ file }: {
   file?: File;
   [key: string]: any;
 }) {

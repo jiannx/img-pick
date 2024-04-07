@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { File, FileGroup, FileTag } from './types';
 import * as _ from 'radash';
-import { removeFile } from '@tauri-apps/api/fs';
+// import { removeFile } from '@tauri-apps/api/fs';
 import { invoke } from "@tauri-apps/api/tauri";
 
 export interface State {
@@ -58,7 +58,7 @@ const useStore = create<State>((set, get) => ({
       });
       set({ fileGroups });
     },
-    setSelectedGroup: (fileGroup, keepOthers) => {
+    setSelectedGroup: (fileGroup) => {
       if (Array.isArray(fileGroup)) {
 
       } else {

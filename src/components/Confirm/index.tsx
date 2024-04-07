@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { useSetState, useAsyncEffect } from 'ahooks';
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, Box } from '@chakra-ui/react';
 
 export default function Confirm({
