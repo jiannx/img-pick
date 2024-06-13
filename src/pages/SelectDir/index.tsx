@@ -4,6 +4,7 @@ import { readDir } from '@tauri-apps/api/fs';
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Flex, Stack, Tag, VStack } from '@chakra-ui/react';
 import { useStore, File, FileGroup } from '@/store';
 import { isImageFile } from "@/utils";
+import _ from 'lodash';
 
 
 export default function () {
@@ -12,19 +13,19 @@ export default function () {
   const onSelectDir = async () => {
     // 读取文件
     let workDir = await open({ multiple: false, directory: true });
-    const files: any[] = (await readDir(workDir as string, { recursive: true }))
-      .map(f => {
-        const nameSplit = f.name?.split('.') || [];
-        const suffix = nameSplit.pop();
-        return {
-          dir: workDir,
-          path: f.path,
-          name: f.name,
-          url: convertFileSrc(f.path),
-          pureName: nameSplit.join('.'),
-          suffix,
-        }
-      });
+    const files: any[] = (await readDir(workDir as string, { recursive: true })).map(f => {
+      const nameSplit = f.name?.split('.') || [];
+      const suffix = nameSplit.pop();
+      console.log('f', f)
+      return {
+        dir: workDir,
+        path: f.path,
+        name: f.name,
+        url: convertFileSrc(f.path),
+        pureName: nameSplit.join('.'),
+        suffix,
+      }
+    });
 
     // 同名文件合并
     const fileMap: { [key: string]: File[] } = {};
@@ -37,13 +38,14 @@ export default function () {
         fileMap[file.pureName as string].push(file);
       });
 
-    const fileGroups: FileGroup[] = Object.values(fileMap).map((files: File[]) => {
+    let fileGroups: FileGroup[] = Object.values(fileMap).map((files: File[]) => {
       return {
         pureName: files[0].pureName,
         imageFile: files.find(f => isImageFile(f)),
         files,
       }
     });
+    fileGroups = _.sortBy(fileGroups, ['pureName']);
 
     setState({
       workDir,
@@ -81,7 +83,7 @@ export default function () {
             </Box>
             <Stack spacing={1} direction={['column', 'row']}>
               <Tag size="sm">command+a 全选</Tag>
-              <Tag size="sm">delete 标记删除</Tag>
+              <Tag size="sm">Delete、D 标记删除</Tag>
               <Tag size="sm">&lt;&minus; 上一张</Tag>
               <Tag size="sm">&minus;&gt; 下一张</Tag>
             </Stack>

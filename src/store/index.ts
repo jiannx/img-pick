@@ -3,6 +3,7 @@ import { File, FileGroup, FileTag } from './types';
 import * as _ from 'radash';
 // import { removeFile } from '@tauri-apps/api/fs';
 import { invoke } from "@tauri-apps/api/tauri";
+import React from 'react';
 
 export interface State {
   /** 工作目录 */
@@ -18,6 +19,13 @@ export interface State {
   filter: string | null;
   /** 重置 */
   onReset: () => void;
+  /** 保存节点引用 */
+  refs: {
+    thumbnail?: React.Ref<HTMLDivElement>;
+  },
+  /** 存储节点handle */
+  setRefs: (key: 'thumbnail', ref: React.Ref<any>) => void;
+  /** 事件 */
   actions: {
     /** 设置标签 */
     setGroupTagChange: (fileGroup: FileGroup, tags: FileTag[]) => void;
@@ -47,6 +55,20 @@ const useStore = create<State>((set, get) => ({
       files: [],
       fileGroups: [],
     })
+  },
+  refs: {
+    thumbnail: null,
+  },
+  setRefs(key, ref) {
+    set((state) => {
+      return {
+        ...state,
+        refs: {
+          ...state.refs,
+          [key]: ref,
+        }
+      };
+    });
   },
   actions: {
     setGroupTagChange(fileGroup, tags) {

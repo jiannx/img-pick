@@ -5,26 +5,35 @@ import { Icon } from "@chakra-ui/react";
 import { MdClose } from "react-icons/md";
 import { ask } from '@tauri-apps/api/dialog';
 import { useKeyPress } from 'ahooks';
+import _ from 'lodash';
+import { useEffect, useRef } from 'react';
 
 export default function () {
   const { setState, fileGroups, previewGroup, filter, onReset, actions } = useStore();
   const toast = useToast({
     isClosable: true,
   });
+  const listRef = useRef<HTMLDivElement>();
 
   useKeyPress('leftarrow', (e) => {
     e.stopPropagation();
     actions.preiviewPrevious();
+    
+    listRef.current?.scrollTo({
+      left: 0,
+      behavior: "smooth",
+    });
   });
   useKeyPress('rightarrow', (e) => {
     e.stopPropagation();
     actions.preiviewNext();
+
   });
   useKeyPress('meta.a', (e) => {
     e.stopPropagation();
     actions.selectAll();
   });
-  useKeyPress(['delete', 'backspace'], (e) => {
+  useKeyPress(['delete', 'backspace', 'd'], (e) => {
     e.stopPropagation();
     if (previewGroup?.tags?.includes(FileTag.Del)) {
       actions.setGroupTagChange(previewGroup!, previewGroup?.tags.filter(t => t !== FileTag.Del));
@@ -33,7 +42,7 @@ export default function () {
     }
   });
 
-  const showGroups = fileGroups?.filter(g => {
+  let showGroups = fileGroups?.filter(g => {
     if (filter === FileTag.Del) {
       return g.tags?.includes(FileTag.Del);
     }
@@ -123,6 +132,7 @@ export default function () {
         bg="gray.50"
         overflow={'auto'}
         px={4}
+        ref={listRef}
       >
         {showGroups?.map(group => {
           const isSel = group.isSelected || group.pureName === previewGroup?.pureName;
