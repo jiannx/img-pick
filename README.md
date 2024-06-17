@@ -25,7 +25,7 @@ https://github.com/lemoolu/img-pick/issues
 - https://react.dev/
 
 # feature
-- [ ] 自动滚动到当前页面
+- [ ] 自动滚动到当前照片
 - [ ] 支持排序，默认名称，时间，大小排序
 - [ ] 含有 raw 的文件显示状态
 - [ ] 显示第几张，共几张图片
@@ -34,3 +34,5 @@ https://github.com/lemoolu/img-pick/issues
 - [ ] 仓库管理
 - [ ] 异常抛出
 - [ ] 移除删除音效 
+- [ ] 支持多语言
+- [ ] 支持皮肤
