@@ -7,6 +7,4 @@ import "./globals.css";
 // import { theme } from './theme';
 
 // React.StrictMode 会导致刷新两次
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-    <App />
-);
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(<App />);

@@ -10,6 +10,7 @@ const spaceVariants = cva(
         col: "flex-col",
       },
       size: {
+        0: "gap-0",
         md: "gap-2",
         sm: "gap-1",
         lg: "gap-4",

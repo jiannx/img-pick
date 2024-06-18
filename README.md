@@ -36,3 +36,6 @@ https://github.com/lemoolu/img-pick/issues
 - [ ] 移除删除音效 
 - [ ] 支持多语言
 - [ ] 支持皮肤
+- [ ] 版本更新功能
+- [ ] 验证码注册功能
+- [ ] 本地持久化
