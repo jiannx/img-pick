@@ -1,6 +1,7 @@
 export enum Suffix {
   PNG = 'png',
   JPG = 'jpg',
+  RAW = 'raw',
 };
 
 export const ImagesSuffix: string[] = [Suffix.JPG, Suffix.PNG];
@@ -10,6 +11,14 @@ export enum FileTag {
   NotDel = 'notDel'
 }
 
+export interface Dir {
+  /** 目录地址 */
+  path: string;
+  /** 目录名称 */
+  name: string;
+  files: File[];
+  selected?: boolean;
+}
 /** 文件 */
 export interface File {
   /** 文件目录 */

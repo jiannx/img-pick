@@ -20,7 +20,7 @@ export interface StarMarkProps extends VariantProps<typeof variants> {
   onChange?: (value: number) => {};
 }
 
-export default function StarMark(props: StarMarkProps) {
+export function StarMark(props: StarMarkProps) {
   const [state, setState] = useControllableValue<number | undefined | null>(props, {
     defaultValue: null,
   });
@@ -30,8 +30,6 @@ export default function StarMark(props: StarMarkProps) {
   const onStarClick = (v: number) => {
     setState(v);
   }
-
-  console.log('state', state, state && state <= 1)
 
   return (
     <Space size={0} className="cursor-pointer">

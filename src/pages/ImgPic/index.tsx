@@ -51,20 +51,16 @@ export default function () {
   });
 
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-    >
+    <ResizablePanelGroup direction="horizontal">
       {/* 左侧面板 */}
-      <ResizablePanel defaultSize={25}>
+      <ResizablePanel defaultSize={20}>
         <LeftPanel />
       </ResizablePanel>
 
       <ResizableHandle withHandle />
 
-      <ResizablePanel defaultSize={75}>
-        <ResizablePanelGroup
-          direction="vertical"
-        >
+      <ResizablePanel>
+        <ResizablePanelGroup direction="vertical">
           <ResizablePanel>
             {/* 中间显示区域 */}
             <Viewer></Viewer>

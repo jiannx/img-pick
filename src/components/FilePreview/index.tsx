@@ -20,9 +20,9 @@ export default function FilePreview({ file }: {
   const inViewport = true;
 
   return (
-    <Center ref={ref} style={{ height: '100%', width: '100%' }}>
-      {inViewport && <Image src={file?.url} alt="" style={{ maxHeight: '100%', maxWidth: '100%' }} boxShadow='base' />}
-    </Center>
+    <div ref={ref} style={{ height: '100%' }}>
+      {inViewport && <img src={file?.url} alt="" style={{ height: '100%', width: 'auto'}} />}
+    </div>
   )
 }
 

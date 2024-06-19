@@ -1,4 +1,4 @@
-import { Flex, Center, Box, Select, CheckboxGroup, Stack, Checkbox, HStack, Tag, useToast } from '@chakra-ui/react';
+import { Flex, Center, Box, Select, CheckboxGroup, Stack, HStack, Tag, useToast } from '@chakra-ui/react';
 import { useStore, FileTag } from '@/store';
 import FilePreview from "@/components/FilePreview";
 import { Icon } from "@chakra-ui/react";
@@ -15,9 +15,18 @@ import {
 import { Button } from "@/components/ui/button"
 import { ThemeTigger } from '@/components/Theme';
 import { Space } from '@/components/Space';
-import { Settings, CircleHelp, SunMedium, MoonStar } from "lucide-react"
+import { Settings, CircleHelp, SunMedium, Bolt, Trash2 } from "lucide-react"
 import LeftPanel from './LeftPanel';
-import StarMark from '@/components/StarMark';
+import { StarMark, ColorMark, TrashMark } from '@/components/Mark';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Checkbox } from "@/components/ui/checkbox"
 
 
 export default function () {
@@ -76,26 +85,48 @@ export default function () {
             {file.suffix}
           </Tag>
         ))}
-        <Icon as={MdClose} boxSize={6} onClick={onReset} title="重新选择目录"></Icon>
+        {/* <Icon as={MdClose} boxSize={6} onClick={onReset} title="重新选择目录"></Icon> */}
       </div>
       <div className='grow flex items-center justify-center'>
         {previewGroup &&
           <FilePreview file={previewGroup?.imageFile}></FilePreview>
         }
       </div>
-      <div className='h-10 flex justify-between items-center'>
-        <div>
-          <StarMark></StarMark>
+      <div className='h-10 flex justify-between items-center px-2'>
+        <Space>
+          <ColorMark />
+          <StarMark />
+          <TrashMark />
+        </Space>
+        <div className='text-sm'>
+          1 / 20
         </div>
-        <div>
+        <Space>
 
-        </div>
-        <div></div>
-        <CheckboxGroup value={previewGroup?.tags || []} onChange={(tags: FileTag[]) => actions.setGroupTagChange(previewGroup!, tags)}>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="secondary" size={'xs'}>
+                <Bolt size={16} strokeWidth={1} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent side="top" align="end">
+              <DropdownMenuLabel>配置</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Checkbox />&nbsp;合并相同名称照片
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button variant="secondary" size={'xs'}>
+            <Trash2 size={16} strokeWidth={1} />
+          </Button>
+        </Space>
+        {/* <CheckboxGroup value={previewGroup?.tags || []} onChange={(tags: FileTag[]) => actions.setGroupTagChange(previewGroup!, tags)}>
           <Stack spacing={[5, 5]} direction={['column', 'row']}>
             <Checkbox value={FileTag.Del}><Box fontSize="small">标记删除</Box></Checkbox>
           </Stack>
-        </CheckboxGroup>
+        </CheckboxGroup> */}
       </div>
     </div>
   )
