@@ -1,5 +1,5 @@
 import { Space } from "../Space";
-import { Trash2 } from 'lucide-react';
+import { Trash2, Trash } from 'lucide-react';
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { useControllableValue } from 'ahooks';
@@ -15,25 +15,26 @@ const variants = cva(
 
 export interface TrashMarkProps extends VariantProps<typeof variants> {
   /** 当前值 null, 0, 1, 2, 3, 4, 5 */
-  value?: number;
+  value?: boolean;
   /** 切换时数据变更 */
-  onChange?: (value: number) => {};
+  onChange?: (value: boolean) => {};
 }
 
 export function TrashMark(props: TrashMarkProps) {
-  const [state, setState] = useControllableValue<number | undefined | null>(props, {
-    defaultValue: null,
+  const [state, setState] = useControllableValue<boolean | undefined>(props, {
+    defaultValue: undefined,
   });
 
-  const className = 'w-3 h-3 fill-gray-300';
-  const classNameActive = 'fill-blue-500 stroke-blue-500';
-  const onStarClick = (v: number) => {
-    setState(v);
+
+  const className = 'w-3 h-3 stroke-gray-300';
+  const classNameActive = 'stroke-primary';
+  const onClick = () => {
+    setState(!state);
   }
-  
+
   return (
-    <Space size={0} className="cursor-pointer">
-      <Trash2 className={className} strokeWidth={1}/>
-    </Space>
+    <div className="cursor-pointer" onClick={onClick}>
+      <Trash2 className={cn(className, { [classNameActive]: state })} strokeWidth={2} />
+    </div>
   )
 }

@@ -1,37 +1,21 @@
-import { Flex, Center, Box, CheckboxGroup, Stack, Checkbox, HStack, Tag, useToast } from '@chakra-ui/react';
+import { Flex, Center, Box, CheckboxGroup, Stack, HStack, Tag, useToast } from '@chakra-ui/react';
 import { useStore, FileTag, File } from '@/store';
 import FilePreview from "@/components/FilePreview";
-import { Icon } from "@chakra-ui/react";
-import { MdClose } from "react-icons/md";
-import { ask } from '@tauri-apps/api/dialog';
-import { useKeyPress } from 'ahooks';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
-import { ThemeTigger } from '@/components/Theme';
 import { Space } from '@/components/Space';
-import { Settings, CircleHelp, SunMedium, MoonStar } from "lucide-react"
-import LeftPanel from './LeftPanel';
 import { cn } from '@/lib/utils';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Trash2 } from "lucide-react"
+import Filter from './components/Filter';
+import { useCurrentWorkspace } from '@/hooks';
 
 
 export default function () {
+  const { fileSelect } = useStore();
+  const { dir, files, selectedFiles, onSelectAll, onUnselectAll, onDeleteSelectedFile } = useCurrentWorkspace();
+  const selectIds = selectedFiles.map(f => f.id);
 
-  const { setState, fileGroups, previewGroup, filter, onReset, actions, dirs } = useStore();
-  const files = dirs.find(d => d.selected)?.files || [];
-  console.log('files', files)
   const toast = useToast({
     isClosable: true,
   });
@@ -85,52 +69,69 @@ export default function () {
     // }
   };
 
+  const onImgSelect = () => {
+
+  };
+
+  console.log('files', files)
+
+
   return (
     <div className='h-full w-full flex flex-col'>
-      <div className={cn('h-8 shrink-0 flex justify-between items-center')}>
+      <Space className={cn('h-8 shrink-0 flex justify-between px-2')}>
         <div></div>
         <Space>
-          {/* <Button variant="outline" size="xs" onClick={actions?.selectAll}>全部选中</Button>
-          <Button variant="outline" size="xs" onClick={actions?.unselectAll}>取消选中</Button>
-          <Button variant="outline" size="xs" onClick={onRemove}>删除选中图片</Button> */}
+          <Button variant="outline" size="xs" onClick={onSelectAll}>全选</Button>
+          <Button variant="outline" size="xs" onClick={onUnselectAll}>取消选中</Button>
+          {/* <Button variant="outline" size="xs" onClick={onRemove}>删除选中图片</Button> */}
 
-          <Select onChange={e => {
-            // setState({ filter: e.target.value, previewGroup: null });
-          }}>
-            <SelectTrigger>
-              <SelectValue placeholder="关闭过滤器" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={FileTag.Del}>已标记删除</SelectItem>
-              <SelectItem value={FileTag.NotDel}>未标记删除</SelectItem>
-            </SelectContent>
-          </Select>
+          <Button variant="secondary" size={'xs'}
+            onClick={() => {
+              onDeleteSelectedFile()
+            }}
+          >
+            <Trash2 size={16} strokeWidth={1} />
+          </Button>
+
+          {/* <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="secondary" size={'xs'}>
+                <Bolt size={16} strokeWidth={1} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent side="top" align="end">
+              <DropdownMenuLabel>配置</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Checkbox checked={setting.mergeSameNameFiles} onCheckedChange={(v: boolean) => setSetting({ mergeSameNameFiles: v })} />&nbsp;合并相同名称照片
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu> */}
+
+          <Filter />
+
         </Space>
-      </div>
-      <div className='grow p-4 overflow-auto'>
-        <div className='flex h-full' size={'md'}>
+      </Space>
+      <div className='grow px-4 pb-4 pt-1 overflow-auto'>
+        <Space className='h-full' size={'lg'}>
           {files?.map((file: File) => {
-            // const isSel = group.isSelected || group.pureName === previewGroup?.pureName;
-            const isSel = false;
             return (
               <div
-                className='h-full relative overflow-hidden'
+                className={cn('h-full aspect-[2/3]', {
+                  'outline outline-gray-600 shadow-xl': selectIds.includes(file.id),
+                  'opacity-50': file.mark?.delete,
+                })}
                 key={file.path}
-                // borderWidth={isSel ? '4px' : '4px'}
-                // borderColor={isSel ? 'green' : 'gray.50'}
-                // boxShadow={isSel ? '2xl' : 'none'}
-                // cursor={'pointer'}
-                // mx={2}
-                // onClick={() => {
-                //   actions?.setSelectedGroup(group);
-                // }}
-              // opacity={group?.tags?.includes(FileTag.Del) ? 0.5 : 1}
+                onClick={() => {
+                  fileSelect(dir, file);
+                }}
               >
                 <FilePreview file={file} />
               </div>
             )
           })}
-        </div>
+        </Space>
       </div>
     </div>
   )

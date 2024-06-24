@@ -26,7 +26,7 @@ export function StarMark(props: StarMarkProps) {
   });
 
   const className = 'w-3 h-3 fill-gray-300';
-  const classNameActive = 'fill-blue-500 stroke-blue-500';
+  const classNameActive = 'fill-primary';
   const onStarClick = (v: number) => {
     setState(v);
   }

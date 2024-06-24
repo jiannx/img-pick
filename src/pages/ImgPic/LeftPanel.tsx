@@ -56,9 +56,9 @@ export default function LeftPanel() {
           )}
         </Space>
       </div>
-      <div className='h-8 flex justify-between items-center border-t px-1 border-border'>
+      <div className='h-8 flex justify-between items-center border-t px-2 border-border'>
         <div></div>
-        <Space>
+        <Space size={'sm'}>
           <ThemeTigger />
           <Button variant="ghost" size={'xs'}>
             <CircleHelp size={16} strokeWidth={1} />
@@ -66,7 +66,7 @@ export default function LeftPanel() {
           <Button variant="ghost" size={'xs'}>
             <Settings size={16} strokeWidth={1} />
           </Button>
-        </Space>
+          </Space>
       </div>
     </div>
   )
