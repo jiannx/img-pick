@@ -1,14 +1,8 @@
 import { useStore, FileTag } from '@/store';
-import FilePreview from "@/components/FilePreview";
-import { Icon } from "@chakra-ui/react";
-import { MdClose } from "react-icons/md";
-import { ask } from '@tauri-apps/api/dialog';
-import { useKeyPress } from 'ahooks';
 import { Button } from "@/components/ui/button"
 import { ThemeTigger } from '@/components/Theme';
 import { Space } from '@/components/Space';
-import { Settings, CircleHelp, X, Plus } from "lucide-react";
-import { cva } from "class-variance-authority"
+import { Settings, CircleHelp, X, Plus, RefreshCw } from "lucide-react";
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -18,11 +12,7 @@ import {
 } from "@/components/ui/tooltip"
 
 export default function LeftPanel() {
-  const { dirs, dirAdd, dirRemove, dirSelect } = useStore();
-  console.log('dirs', dirs);
-
-  const onDirRemove = () => {
-  }
+  const { dirs, dirAdd, dirRemove, dirSelect, dirRefresh } = useStore();
   const dirClass = 'group w-full text-sm py-1 px-4 rounded flex items-center justify-between cursor-pointer bg-gray';
   const dirClassActive = 'bg-slate-700 text-white'
 
@@ -46,12 +36,22 @@ export default function LeftPanel() {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <X
-                className='w-4 h-4 invisible group-hover:visible'
-                onClick={() => {
-                  dirRemove(dir);
-                }}
-              />
+              <Space>
+                <RefreshCw
+                  className='w-4 h-4 invisible group-hover:visible'
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dirRefresh(dir);
+                  }}
+                />
+                <X
+                  className='w-4 h-4 invisible group-hover:visible'
+                  onClick={() => {
+                    dirRemove(dir);
+                  }}
+                />
+              </Space>
+
             </div>
           )}
         </Space>
@@ -66,7 +66,7 @@ export default function LeftPanel() {
           <Button variant="ghost" size={'xs'}>
             <Settings size={16} strokeWidth={1} />
           </Button>
-          </Space>
+        </Space>
       </div>
     </div>
   )

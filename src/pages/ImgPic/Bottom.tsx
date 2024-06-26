@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Trash2 } from "lucide-react"
 import Filter from './components/Filter';
 import { useCurrentWorkspace } from '@/hooks';
-
+import DeleteConfirm from './components/DeleteConfirm';
 
 export default function () {
   const { fileSelect } = useStore();
@@ -85,13 +85,16 @@ export default function () {
           <Button variant="outline" size="xs" onClick={onUnselectAll}>取消选中</Button>
           {/* <Button variant="outline" size="xs" onClick={onRemove}>删除选中图片</Button> */}
 
-          <Button variant="secondary" size={'xs'}
-            onClick={() => {
-              onDeleteSelectedFile()
-            }}
-          >
-            <Trash2 size={16} strokeWidth={1} />
-          </Button>
+
+          <DeleteConfirm>
+            <Button variant="secondary" size={'xs'}
+              onClick={() => {
+                onDeleteSelectedFile()
+              }}
+            >
+              <Trash2 size={16} strokeWidth={1} />
+            </Button>
+          </DeleteConfirm>
 
           {/* <DropdownMenu>
             <DropdownMenuTrigger>

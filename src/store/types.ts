@@ -54,12 +54,3 @@ export interface File {
 
   },
 }
-/** 同名分组 */
-export interface FileGroup {
-  /** 文件名，不包含后缀 */
-  pureName: string;
-  imageFile?: File;
-  files?: File[];
-  tags?: FileTag[];
-  isSelected?: boolean;
-}

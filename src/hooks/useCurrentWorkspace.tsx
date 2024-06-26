@@ -30,8 +30,8 @@ export default function useCurrentWorkspace() {
       fileSelect(dir, []);
     },
     onDeleteSelectedFile: () => {
-      console.log(files.filter(f => f.selected));
-      fileSelectDelete(dir!, files.filter(f => f.selected));
+      // console.log(files.filter(f => f.selected));
+      // fileSelectDelete(dir!, files.filter(f => f.selected));
     },
   }
 }
