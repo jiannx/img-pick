@@ -1,5 +1,5 @@
 import { Flex, Center, Box, CheckboxGroup, Stack, HStack, Tag, useToast } from '@chakra-ui/react';
-import { useStore, FileTag, File } from '@/store';
+import {  FileTag, File } from '@/types';
 import FilePreview from "@/components/FilePreview";
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
@@ -8,11 +8,11 @@ import { Space } from '@/components/Space';
 import { cn } from '@/lib/utils';
 import { Trash2 } from "lucide-react"
 import Filter from './components/Filter';
-import { useCurrentWorkspace } from '@/hooks';
+import { useCurrentWorkspace, useStore, useActions } from '@/hooks';
 import DeleteConfirm from './components/DeleteConfirm';
 
 export default function () {
-  const { fileSelect } = useStore();
+  const { fileSelect } = useActions();
   const { dir, files, selectedFiles, onSelectAll, onUnselectAll, onDeleteSelectedFile } = useCurrentWorkspace();
   const selectIds = selectedFiles.map(f => f.id);
 

@@ -1,5 +1,4 @@
-import { Space } from "../Space";
-import { Trash2, Trash } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { useControllableValue } from 'ahooks';

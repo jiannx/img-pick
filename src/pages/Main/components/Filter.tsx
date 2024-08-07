@@ -1,4 +1,3 @@
-import { useStore } from '@/store';
 import _ from 'lodash';
 import { Button } from "@/components/ui/button";
 import {
@@ -11,10 +10,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox"
 import { Filter as FilterIcon } from "lucide-react"
-import { useCurrentWorkspace } from '@/hooks';
+import { useCurrentWorkspace, useStore, useActions } from '@/hooks';
 
 export default function Filter() {
-  const { dirFilterSet } = useStore();
+  const { dirFilterSet } = useActions();
   const { dir, filter } = useCurrentWorkspace();
   // 基于全量文件获取所有后缀
   const fileSuffixes = _.uniq(dir?.files.map(f => f.suffix));

@@ -1,4 +1,4 @@
-import { useStore, FileTag } from '@/store';
+import { useStore } from '@/hooks';
 import { Button } from "@/components/ui/button"
 import { ThemeTigger } from '@/components/Theme';
 import { Space } from '@/components/Space';
@@ -10,9 +10,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useActions } from '@/hooks';
+import { FileTag } from '@/types';
 
 export default function LeftPanel() {
-  const { dirs, dirAdd, dirRemove, dirSelect, dirRefresh } = useStore();
+  const { dirs } = useStore();
+  const { dirAdd, dirRemove, dirSelect, dirRefresh } = useActions();
+
   const dirClass = 'group w-full text-sm py-1 px-4 rounded flex items-center justify-between cursor-pointer bg-gray';
   const dirClassActive = 'bg-slate-700 text-white'
 

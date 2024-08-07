@@ -1,50 +1,31 @@
-import { useEffect } from "react";
-import "./App.css";
-import { useStore } from '@/store';
-import SelectDir from "./SelectDir";
-import ImgPic from "./ImgPic";
+import Main from "./Main";
 import {
   createHashRouter,
   RouterProvider,
 } from "react-router-dom";
-import { ThemeProvider } from "@/components/Theme"
-
+import { ThemeProvider } from "@/components/Theme";
+import Setting from './Helper';
+import useKeyboard from "@/hooks/useKeyboard";
 
 const router = createHashRouter([
   {
     path: "/",
-    element: <ImgPic />,
+    element: <Main />,
   },
   {
-    path: "/help",
-    element: <SelectDir />,
+    path: "/setting",
+    element: <Setting />,
   },
 ]);
 
 function App() {
-  useEffect(() => {
-    // 移除默认快捷键
-    document.addEventListener("keydown", function (event) {
-      event.preventDefault();
-    });
-  }, []);
-
-  // const { workDir, fileGroups } = useStore();
-  // let child = null;
-  // if (!workDir) {
-  //   child = <SelectDir />
-  // } else if (fileGroups) {
-  //   child = <ImgPic />
-  // }
-
-  // return child;
+  useKeyboard();
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="ui-theme">
       <RouterProvider router={router} />
     </ThemeProvider>
   )
-
 }
 
 export default App;

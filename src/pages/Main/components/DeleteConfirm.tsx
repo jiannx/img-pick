@@ -12,9 +12,10 @@ import {
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox";
 import { useCurrentWorkspace } from "@/hooks";
-import { useStore, File } from "@/store";
+import { File } from "@/types";
 import { Trash2 } from "lucide-react"
 import { useState } from "react";
+import { useStore } from "@/hooks";
 
 interface DeleteConfirmProps extends React.HTMLAttributes<HTMLDivElement> {
 

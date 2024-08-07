@@ -1,5 +1,5 @@
 import { Space } from "../Space";
-import { CircleCheck, Circle } from 'lucide-react';
+import { Circle } from 'lucide-react';
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { useControllableValue } from 'ahooks';

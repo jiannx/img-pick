@@ -1,62 +1,17 @@
-import { Flex, Center, Box, Select, CheckboxGroup, Stack, HStack, Tag, useToast } from '@chakra-ui/react';
-import { useStore, FileTag } from '@/store';
 import FilePreview from "@/components/FilePreview";
-import { Icon } from "@chakra-ui/react";
-import { MdClose } from "react-icons/md";
-import { ask } from '@tauri-apps/api/dialog';
-import { useKeyPress } from 'ahooks';
 import _ from 'lodash';
-import { useEffect, useRef } from 'react';
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button"
-import { ThemeTigger } from '@/components/Theme';
 import { Space } from '@/components/Space';
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import LeftPanel from './LeftPanel';
 import { StarMark, ColorMark, TrashMark } from '@/components/Mark';
-import { useCurrentWorkspace } from '@/hooks';
+import { useCurrentWorkspace, useStore, useActions } from '@/hooks';
 
 
 export default function () {
-  const { fileSelectPrevious, fileSelectNext, fileMarkSet } = useStore();
+  const { fileSelectPrevious, fileSelectNext, fileMarkSet } = useActions();
   const { dir, files, selectedFiles, selectedFileIndex } = useCurrentWorkspace();
   const selectedFile = selectedFiles[0];
-
-  const toast = useToast({
-    isClosable: true,
-  });
-  const listRef = useRef<HTMLDivElement>();
-
-  useKeyPress('leftarrow', (e) => {
-    e.stopPropagation();
-    // actions.preiviewPrevious();
-
-    listRef.current?.scrollTo({
-      left: 0,
-      behavior: "smooth",
-    });
-  });
-  useKeyPress('rightarrow', (e) => {
-    e.stopPropagation();
-    // actions.preiviewNext();
-
-  });
-  useKeyPress('meta.a', (e) => {
-    e.stopPropagation();
-    actions.selectAll();
-  });
-  useKeyPress(['delete', 'backspace', 'd'], (e) => {
-    // e.stopPropagation();
-    // if (previewGroup?.tags?.includes(FileTag.Del)) {
-    //   actions.setGroupTagChange(previewGroup!, previewGroup?.tags.filter(t => t !== FileTag.Del));
-    // } else {
-    //   actions.setGroupTagChange(previewGroup!, [...(previewGroup?.tags || []), FileTag.Del]);
-    // }
-  });
 
   if (!selectedFile) {
     return null;

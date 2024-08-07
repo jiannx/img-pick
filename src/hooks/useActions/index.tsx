@@ -1,58 +1,17 @@
-import { create } from 'zustand';
-import { File, Dir, ImagesSuffix, Suffix } from './types';
+import { Dir, File, ImagesSuffix, Suffix } from "@/types";
+import useStore from "../useStore";
 import _ from 'lodash';
-// import { removeFile } from '@tauri-apps/api/fs';
 import { invoke } from "@tauri-apps/api/tauri";
 import { open } from "@tauri-apps/api/dialog"
 import { readDir } from '@tauri-apps/api/fs';
 import { convertFileSrc } from '@tauri-apps/api/tauri'
 
-export interface State {
-  /** 设置配置 */
-  setting: {
-    /** 同时删除同名文件 */
-    autoDeleteSameNameFile?: boolean;
-    /** 删除前提示校验 */
-    deleteConfirmBefore?: boolean;
-  };
-  setSetting: (setting: Partial<State['setting']>) => void;
-  /**  directory list */
-  dirs: Array<Dir>;
-  /** add new directory */
-  dirRead: (path: string) => Promise<Dir>;
-  dirAdd: () => void;
-  /** remove directory */
-  dirRemove: (dir: Dir) => void;
-  /** select directory */
-  dirSelect: (dir: Dir) => void;
-  dirRefresh: (dir: Dir) => void;
-  fileSelect: (dir?: Dir, file?: File | File[], isClearOthers?: boolean) => void;
-  fileSelectAll: () => void;
-  fileSelectPrevious: () => void;
-  fileSelectNext: () => void;
-  fileSelectDelete: (dir: Dir, file: File[]) => Promise<void>;
-  /** set tags */
-  fileMarkSet: (file: File | undefined, markkey: 'delete' | 'color' | 'star', markValue: any) => void;
-  dirFilterSet: (die: Dir | undefined, markkey: string, value: any) => void;
-}
+export default function useActions() {
+  const store = useStore();
+  const { set } = store;
 
-const useStore = create<State>((set, get) => {
-
-  return {
-    setting: {
-      autoDeleteSameNameFile: false,
-      deleteConfirmBefore: true,
-    },
-    setSetting: (setting) => {
-      set({
-        setting: {
-          ...get().setting,
-          ...setting
-        }
-      })
-    },
-    dirs: [],
-    async dirRead(path: string) {
+  const actions = {
+    dirRead: async (path: string) => {
       let files: File[] = (await readDir(path, { recursive: true })).map(f => {
         const nameSplit = f.name?.split('.') || [];
         const suffix = (nameSplit.pop() || '').toUpperCase() as Suffix;
@@ -67,6 +26,7 @@ const useStore = create<State>((set, get) => {
         }
       }).filter(f => ImagesSuffix.includes(f.suffix));
       files = _.sortBy(files, ['name']);
+
       const dir: Dir = {
         id: path as string,
         path: path as string,
@@ -80,42 +40,45 @@ const useStore = create<State>((set, get) => {
       };
       return dir;
     },
-    async dirAdd() {
+    dirAdd: async () => {
       let workDir = await open({ multiple: false, directory: true });
       const path = workDir as string;
-      const dir = await get().dirRead(path);
+      const dir = await actions.dirRead(path);
 
-      const state = get();
-      if (state.dirs.length === 0) {
+      if (store.dirs.length === 0) {
         dir.selected = true;
       }
-
-      set(state => ({
-        dirs: _.uniqBy([...state.dirs, dir], 'path'),
-      }));
+      console.log('dir', dir)
+      set({
+        dirs: _.uniqBy([...store.dirs, dir], 'path'),
+      });
     },
-    async dirRemove(dir: Dir) {
-      set((state) => ({
-        dirs: state.dirs.filter(d => d.path !== dir.path)
-      }))
+    /** remove directory */
+    dirRemove: (dir: Dir) => {
+      set({
+        dirs: store.dirs.filter(d => d.path !== dir.path)
+      });
     },
-    dirSelect(dir: Dir) {
-      set((state) => ({
-        dirs: state.dirs.map(d => ({
+    /** select directory */
+    dirSelect: (dir: Dir) => {
+      set({
+        dirs: store.dirs.map(d => ({
           ...d, selected: dir.path === d.path,
         })),
-      }))
+      });
     },
-    async dirRefresh(dir: Dir) {
-      const newdir = await get().dirRead(dir.path);
-      const oldDir = get().dirs.find(d => d.id === dir.id);
+    /** 目录刷新 */
+    dirRefresh: async (dir: Dir) => {
+      const newdir = await actions.dirRead(dir.path);
+      const oldDir = store.dirs.find(d => d.id === dir.id);
       newdir.selected = oldDir?.selected as boolean;
       Object.assign(oldDir!, newdir)
-      set(state => ({
-        dirs: [...state.dirs],
-      }));
+      set({
+        dirs: [...store.dirs],
+      });
     },
-    fileSelect(dir?: Dir, file?: File | File[], isClearOthers = true) {
+    /** 文件选中 */
+    fileSelect: (dir?: Dir, file?: File | File[], isClearOthers?: boolean) => {
       const fileIds = _.isArray(file) ? file.map(f => f?.id) : [file?.id]
       dir?.files?.forEach(f => {
         if (fileIds.includes(f.id)) {
@@ -124,21 +87,22 @@ const useStore = create<State>((set, get) => {
           f.selected = false;
         }
       });
-      set((state) => ({
-        dirs: [...state.dirs],
-      }))
+      set({
+        dirs: [...store.dirs],
+      });
     },
-    fileSelectAll() {
-      const dir = get().dirs.find(d => d.selected);
+    /** 文件全选 */
+    fileSelectAll: (dir: Dir) => {
       dir?.files?.forEach(f => {
         f.selected = true;
       });
-      set((state) => ({
-        dirs: [...state.dirs],
-      }));
+      set({
+        dirs: [...store.dirs],
+      });
     },
+    /** 文件选择下一张 */
     fileSelectPrevious: () => {
-      const dir = get().dirs.find(d => d.selected);
+      const dir = store.dirs.find(d => d.selected);
       const files = (dir?.files || []).filter(f => dir?.filter.suffixes?.includes(f.suffix));
       if (files.length === 0) {
         return;
@@ -150,12 +114,13 @@ const useStore = create<State>((set, get) => {
         files[index].selected = false;
         files[index - 1].selected = true;
       }
-      set((state) => ({
-        dirs: [...state.dirs],
-      }));
+      set({
+        dirs: [...store.dirs],
+      });
     },
+    /** 文件选中下一张 */
     fileSelectNext: () => {
-      const dir = get().dirs.find(d => d.selected);
+      const dir = store.dirs.find(d => d.selected);
       const files = (dir?.files || []).filter(f => dir?.filter.suffixes?.includes(f.suffix));
       if (files.length === 0) {
         return;
@@ -167,10 +132,11 @@ const useStore = create<State>((set, get) => {
         files[index].selected = false;
         files[index + 1].selected = true;
       }
-      set((state) => ({
-        dirs: [...state.dirs],
-      }));
+      set({
+        dirs: [...store.dirs],
+      });
     },
+    /** 图片删除 */
     fileSelectDelete: async (dir: Dir, files: File[]) => {
       for (let file of files) {
         // await removeFile(file.path);
@@ -181,31 +147,31 @@ const useStore = create<State>((set, get) => {
       // set((state) => ({
       //   dirs: [...state.dirs],
       // }));
-      get().dirRefresh(dir);
+      actions.dirRefresh(dir);
     },
-    fileMarkSet: (file, markkey, markValue) => {
+    /** set tags */
+    fileMarkSet: (file: File | undefined, markkey: 'delete' | 'color' | 'star', markValue: any) => {
       if (!file) {
         return;
       }
       _.set(file, ['mark', markkey], markValue);
-      set((state) => ({
-        dirs: [...state.dirs],
-      }));
+      set({
+        dirs: [...store.dirs],
+      });
     },
-    dirFilterSet: (dir, key, value) => {
-      set((state) => ({
-        dirs: state.dirs.map(d => ({
+    /** 文件过滤器设置 */
+    dirFilterSet: (dir: Dir | undefined, markkey: string, value: any) => {
+      set({
+        dirs: store.dirs.map(d => ({
           ...d,
           filter: d.id === dir?.id ? {
             ...d.filter,
-            [key]: value
+            [markkey]: value
           } : d.filter
         })),
-      }))
-    }
-  };
-})
+      })
+    },
+  }
 
-export { useStore };
-
-export * from './types';
+  return actions;
+}

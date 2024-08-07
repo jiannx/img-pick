@@ -1,8 +1,10 @@
-import { useStore, File } from "@/store";
+import { useStore, useActions } from "@/hooks";
 
 export default function useCurrentWorkspace() {
-  const { dirs, fileSelect, fileSelectDelete } = useStore();
+  const { dirs, } = useStore();
+  const { fileSelect, fileSelectDelete } = useActions();
   const dir = dirs.find(d => d.selected);
+
   const filter = dir?.filter;
   let files = (dir?.files || []).filter(f => dir?.filter.suffixes?.includes(f.suffix));
   // 已标记删除的

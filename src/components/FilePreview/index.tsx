@@ -1,10 +1,7 @@
-import { File } from "@/store";
+import { File } from "@/types";
 import { useRef } from "react";
-import { convertFileSrc } from '@tauri-apps/api/tauri';
-import { Center, Image } from "@chakra-ui/react";
+// import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { useInViewport } from 'ahooks';
-import { Space } from "../Space";
-import { cn } from "@/lib/utils";
 
 // async function read() {
 //   // await readImageToUrl('/Users/hao/a/DSCF1675.JPG');
